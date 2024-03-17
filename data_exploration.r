@@ -57,11 +57,28 @@ data = GetAssayData(object = cts, assay = "RNA", layer = "data")
 head(data)
 
 
-sc <- scFeatures(
-  data = cts,
-  sample = cts$outcome,
-  celltype = cts$cells,
+red = readRDS("./reduced.rds")
+red = UpdateSeuratObject(red)
+
+str(red)
+
+reddata <- red@assays$RNA@data
+
+alldata <- scFeatures:::formatData(data = reddata, celltype = red$cells, sample = red$donor)
+
+ffeatures <- run_gene_prop_celltype(
+  data = alldata,
   type = "scrna",
-  ncores = 1,
-  species = "Homo sapiens",
+  num_top_gene = 100,
+  ncores = 1
 )
+ffeatures2 <- run_gene_mean(
+  alldata,
+  type = "scrna", num_top_gene = 150, ncores = 1
+)
+
+head(ffeatures)
+outcome = subset(red, red$disease_stage)
+
+
+write.csv(ffeatures, "./final.csv", row.names=TRUE)
