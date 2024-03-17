@@ -55,3 +55,13 @@ saveRDS(cts, file = "./reduced.rds")
 
 data = GetAssayData(object = cts, assay = "RNA", layer = "data")
 head(data)
+
+
+sc <- scFeatures(
+  data = cts,
+  sample = cts$outcome,
+  celltype = cts$cells,
+  type = "scrna",
+  ncores = 1,
+  species = "Homo sapiens",
+)
